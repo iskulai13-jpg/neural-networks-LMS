@@ -1,260 +1,115 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="kk">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Neural Networks LMS</title>
-  <style>
-    :root{
-      --bg: #0b1220;
-      --card: rgba(255,255,255,.10);
-      --card2: rgba(255,255,255,.06);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.72);
-      --accent: #4f8cff;
-      --accent2:#6ee7ff;
-      --shadow: 0 20px 60px rgba(0,0,0,.35);
-      --radius: 18px;
-      --max: 1100px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height:100vh;
-    }
-.auth-switch {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neural Networks LMS</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
 }
 
-.auth-btn {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  background: rgba(255,255,255,0.08);
-  color: #fff;
-  cursor: pointer;
-  font-weight: 600;
+body{
+  min-height:100vh;
+  background:
+    linear-gradient(rgba(6,15,30,.75), rgba(6,15,30,.9)),
+    url("assets/bg.jpg") center/cover no-repeat;
+  color:white;
 }
 
-.auth-btn.active {
-  background: linear-gradient(90deg,#5aa9ff,#5de0e6);
-  color: #000;
+/* ====== NAVBAR ====== */
+.navbar{
+  width:1100px;
+  margin:40px auto 30px;
+  padding:14px 22px;
+  border-radius:14px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  backdrop-filter: blur(10px);
 }
-    /* Background image + overlay */
-    .hero{
-      position:relative;
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 28px 18px;
-      overflow:hidden;
-    }
-    .hero::before{
-      content:"";
-      position:absolute; inset:0;
-      background:
-        linear-gradient(120deg, rgba(11,18,32,.92) 0%, rgba(11,18,32,.72) 55%, rgba(11,18,32,.92) 100%),
-        url("./assets/bg.jpg") center/cover no-repeat;
-      transform: scale(1.02);
-      filter: saturate(1.05) contrast(1.05);
-    }
-    .hero::after{
-      content:"";
-      position:absolute; inset:-200px;
-      background: radial-gradient(circle at 20% 15%, rgba(79,140,255,.25), transparent 45%),
-                  radial-gradient(circle at 85% 35%, rgba(110,231,255,.18), transparent 45%),
-                  radial-gradient(circle at 40% 90%, rgba(99,102,241,.18), transparent 45%);
-      pointer-events:none;
-    }
 
-    .wrap{
-      position:relative;
-      width:100%;
-      max-width: var(--max);
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 22px;
-      align-items:stretch;
-    }
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:600;
+  font-size:18px;
+}
 
-    .topbar{
-      position:absolute;
-      top: 18px;
-      left: 18px;
-      right: 18px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-      backdrop-filter: blur(10px);
-    }
-    .brand{
-      display:flex; gap:10px; align-items:center;
-      font-weight:700; letter-spacing:.2px;
-    }
-    .logo{
-      width:36px; height:36px; border-radius: 12px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow: 0 10px 30px rgba(79,140,255,.25);
-    }
-    .nav a{
-      color: var(--muted);
-      text-decoration:none;
-      font-weight:600;
-      margin-left: 14px;
-    }
-    .nav a:hover{ color: var(--text); }
+.logo-box{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  background:linear-gradient(135deg,#5aa9ff,#5de0e6);
+}
 
-    .card{
-      background: var(--card);
-      border: 1px solid rgba(255,255,255,.14);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-      padding: 28px;
-    }
-    .card.soft{
-      background: var(--card2);
-    }
+.nav-links{
+  display:flex;
+  gap:20px;
+  font-size:14px;
+  opacity:.85;
+}
 
-    h1{
-      margin:0 0 10px 0;
-      font-size: clamp(26px, 3.4vw, 42px);
-      line-height:1.15;
-      letter-spacing: .2px;
-    }
-    .subtitle{
-      margin:0 0 18px 0;
-      color: var(--muted);
-      font-size: 15.5px;
-      line-height:1.55;
-    }
+/* ====== MAIN ====== */
+.container{
+  width:1100px;
+  margin:0 auto;
+  display:flex;
+  gap:30px;
+}
 
-    .chips{
-      display:flex; flex-wrap:wrap; gap:10px;
-      margin: 16px 0 22px;
-    }
-    .chip{
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.14);
-      color: rgba(255,255,255,.78);
-      font-size: 13px;
-      font-weight: 600;
-    }
+.card{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  padding:30px;
+  backdrop-filter: blur(14px);
+}
 
-    .actions{
-      display:flex;
-      gap:12px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-    .btn{
-      border:0;
-      cursor:pointer;
-      font-weight:800;
-      padding: 12px 16px;
-      border-radius: 14px;
-      transition: transform .08s ease, opacity .2s ease;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-    }
-    .btn:active{ transform: translateY(1px); }
-    .btn.primary{
-      color:#081022;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow: 0 16px 40px rgba(79,140,255,.25);
-    }
-    .btn.ghost{
-      color: var(--text);
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.16);
-    }
+/* LEFT */
+.left{
+  flex:1.2;
+}
 
-    .meta{
-      margin-top: 18px;
-      color: rgba(255,255,255,.65);
-      font-size: 13.5px;
-      line-height:1.5;
-    }
+.left h1{
+  font-size:34px;
+  line-height:1.2;
+  margin-bottom:18px;
+}
 
-    .formTitle{
-      font-size: 16px;
-      font-weight: 800;
-      margin: 0 0 10px 0;
-    }
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap: 6px;
-      margin: 10px 0;
-    }
-    label{
-      color: rgba(255,255,255,.72);
-      font-weight: 650;
-      font-size: 13px;
-    }
-    input{
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.16);
-      border-radius: 14px;
-      padding: 12px 12px;
-      color: var(--text);
-      outline: none;
-    }
-    input::placeholder{ color: rgba(255,255,255,.45); }
-    input:focus{
-      border-color: rgba(110,231,255,.45);
-      box-shadow: 0 0 0 4px rgba(110,231,255,.12);
-    }
+.left p{
+  font-size:15px;
+  opacity:.8;
+  margin-bottom:18px;
+}
 
-    .small{
-      font-size: 12.5px;
-      color: rgba(255,255,255,.62);
-      margin-top: 10px;
-      line-height:1.45;
-    }
+.tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:20px;
+}
 
-    footer{
-      position: absolute;
-      bottom: 14px;
-      left: 18px;
-      right: 18px;
-      max-width: var(--max);
-      margin: 0 auto;
-      color: rgba(255,255,255,.55);
-      font-size: 12.5px;
-      display:flex;
-      justify-content:space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+.tag{
+  padding:6px 10px;
+  border-radius:10px;
+  font-size:12px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.08);
+}
 
-    @media (max-width: 880px){
-      .wrap{ grid-template-columns: 1fr; }
-      .topbar{ position:relative; top:auto; left:auto; right:auto; margin-bottom: 16px; }
-      footer{ position:relative; margin-top: 16px; bottom:auto; }
-    }
-    .form-actions{
+/* BUTTONS */
+.btn-row{
   display:flex;
   gap:12px;
-  margin-top:14px;
+  margin-top:10px;
 }
 
 .btn{
@@ -262,115 +117,134 @@
   padding:12px 14px;
   border-radius:12px;
   border:1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.06);
-  color:#fff;
-  font-weight:700;
+  background:rgba(255,255,255,.06);
+  color:white;
+  font-weight:600;
   cursor:pointer;
-  transition:.2s ease;
+  transition:.2s;
 }
 
 .btn:hover{
-  transform: translateY(-1px);
-  border-color: rgba(255,255,255,.22);
+  transform:translateY(-2px);
+  border-color:rgba(255,255,255,.25);
 }
 
 .btn-primary{
-  background: linear-gradient(90deg,#5aa9ff,#5de0e6);
-  color:#071018;
-  border: none;
+  background:linear-gradient(90deg,#5aa9ff,#5de0e6);
+  color:#041018;
+  border:none;
 }
 
-.btn-ghost{
-  background: rgba(255,255,255,.08);
+/* RIGHT */
+.right{
+  width:360px;
 }
-  </style>
+
+.form-title{
+  font-size:18px;
+  margin-bottom:16px;
+}
+
+.input{
+  width:100%;
+  margin-bottom:12px;
+  padding:11px 12px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.05);
+  color:white;
+}
+
+.note{
+  font-size:12px;
+  opacity:.6;
+  margin-top:8px;
+}
+
+/* FOOTER */
+.footer{
+  width:1100px;
+  margin:40px auto;
+  font-size:12px;
+  opacity:.5;
+  display:flex;
+  justify-content:space-between;
+}
+</style>
 </head>
 
 <body>
-  <section class="hero">
-    <div class="topbar">
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          Neural Networks LMS<br />
-          <span style="font-weight:650; color:rgba(255,255,255,.65); font-size:12.5px;">Білім беру порталы</span>
-        </div>
-      </div>
-      <nav class="nav">
-        <a href="#courses">Курстар</a>
-             <a href="#register">Тіркелу</a>
-      </nav>
-    </div>
 
-    <div class="wrap">
-      <!-- Left -->
-      <div class="card">
-        <h1>Болашақ информатика мұғалімдерін даярлауға арналған<br/>AI & Neural Networks курстары</h1>
-        <p class="subtitle">
-          Машиналық оқыту, нейрондық желілер, компьютерлік көру, деректермен жұмыс және оқу аналитикасы.
-          Бір платформада – материалдар, тапсырмалар, тест және нәтижелер.
-        </p>
-
-        <div class="chips" id="courses">
-          <span class="chip">Machine Learning</span>
-          <span class="chip">Neural Networks</span>
-          <span class="chip">Computer Vision</span>
-          <span class="chip">Big Data</span>
-                 </div>
-
-        <div class="form-actions">
-  <button type="button" class="btn btn-primary">Тіркелу</button>
-  <button type="button" class="btn btn-ghost">Кіру</button>
-</div>
-          
-       
-        </div>
-
-        <div class="meta" id="about">
-          Жетекші: <b>п.ғ.д., профессор Серік М.</b><br/>
-          Орындаушы: <b>Нұржанар</b><br/>
-          Платформа: <b>Neural Networks LMS</b>
-        </div>
-      </div>
-
-      <!-- Right -->
-      <div class="card soft" id="register">
-        <p class="formTitle">Тіркелу (демо)</p>
-
-        <!-- Static demo form (GitHub Pages-та backend жоқ). Кейін Firebase/Google Forms/Sheets қосуға болады -->
-        <form onsubmit="event.preventDefault(); alert('Демо: тіркелу батырмасы басылды ✅');">
-          <div class="field">
-            <label>Аты-жөніңіз</label>
-            <input type="text" placeholder="Мысалы: Аружан Т." required />
-          </div>
-
-          <div class="field">
-            <label>Email</label>
-            <input type="email" placeholder="name@mail.com" required />
-          </div>
-
-          <div class="field">
-            <label>Рөл</label>
-            <input type="text" placeholder="Студент / Магистрант / Оқытушы" />
-          </div>
-
-          <div class="auth-switch">
-  <button class="auth-btn active">Тіркелу</button>
- 
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">
+    <div class="logo-box"></div>
+    Neural Networks LMS
+  </div>
+  <div class="nav-links">
+    Курстар
+    Тіркелу
+  </div>
 </div>
 
-          <div class="small">
-            * Бұл қазір статикалық демо. Нақты тіркелуді қосу үшін келесі қадамда:
-            Google Forms/Sheets немесе Firebase Authentication жалғаймыз.
-          </div>
-        </form>
-      </div>
+<!-- MAIN -->
+<div class="container">
+
+  <!-- LEFT -->
+  <div class="card left">
+    <h1>Болашақ информатика мұғалімдерін даярлауға арналған<br>
+    AI & Neural Networks курстары</h1>
+
+    <p>
+      Машиналық оқыту, нейрондық желілер, компьютерлік көру,
+      деректермен жұмыс және оқу аналитикасы.
+      Бір платформада – материалдар, тапсырмалар,
+      тест және нәтижелер.
+    </p>
+
+    <div class="tags">
+      <div class="tag">Machine Learning</div>
+      <div class="tag">Neural Networks</div>
+      <div class="tag">Computer Vision</div>
+      <div class="tag">Big Data</div>
     </div>
 
-    <footer>
-      <div>© 2026 Neural Networks LMS</div>
-      <div>GitHub Pages арқылы жарияланған</div>
-    </footer>
-  </section>
+    <div class="btn-row">
+      <button class="btn btn-primary">Тіркелу</button>
+      <button class="btn">Кіру</button>
+    </div>
+
+    <p style="margin-top:18px;font-size:13px;opacity:.6">
+      Жетекші: п.ғ.д., профессор Серік М.<br>
+      Орындаушы: Нұржанар
+    </p>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="card right">
+    <div class="form-title">Тіркелу</div>
+
+    <input class="input" placeholder="Аты-жөніңіз">
+    <input class="input" placeholder="Email">
+    <input class="input" placeholder="Рөлі">
+
+    <div class="btn-row">
+      <button class="btn btn-primary">Тіркелу</button>
+      <button class="btn">Кіру</button>
+    </div>
+
+    <div class="note">
+      Бұл демонстрациялық форма. Нақты тіркелу жүйесі кейін қосылады.
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div>© 2026 Neural Networks LMS</div>
+  <div>GitHub Pages арқылы жарияланған</div>
+</div>
+
 </body>
 </html>
