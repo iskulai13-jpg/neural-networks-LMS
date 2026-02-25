@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Neural Networks LMS</title>
+  <style>
+    body{font-family:Arial, sans-serif; margin:0; background:#0b0f14; color:#e8eef7;}
+    header{display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid #1b2430;}
+    a{color:#8ab4ff; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:18px;}
+    .grid{display:grid; grid-template-columns:1fr; gap:14px;}
+    @media(min-width:900px){.grid{grid-template-columns:1.2fr .8fr}}
+    .card{background:#111826; border:1px solid #1b2430; border-radius:14px; padding:16px;}
+    h1{font-size:22px; margin:0}
+    h2{font-size:16px; margin:0 0 10px}
+    .btn{display:inline-block; padding:10px 12px; border:1px solid #2b3b52; border-radius:10px; background:#0f1724; color:#e8eef7}
+    .btn:hover{background:#122038}
+    .list{margin:0; padding-left:18px; line-height:1.6}
+    .small{color:#a9b6c6; font-size:13px}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    input,select{background:#0f1724; border:1px solid #2b3b52; color:#e8eef7; padding:10px; border-radius:10px; width:100%}
+    table{width:100%; border-collapse:collapse; font-size:14px}
+    th,td{border-bottom:1px solid #1b2430; padding:10px; text-align:left}
+    th{color:#a9b6c6; font-weight:600}
+    .tag{display:inline-block; padding:3px 8px; border:1px solid #2b3b52; border-radius:999px; font-size:12px; color:#a9b6c6}
+  </style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Neural Networks LMS</h1>
+    <div class="small">Мини-портал: курстар • тест • нәтижені талдау</div>
+  </div>
+  <nav class="row">
+    <a class="btn" href="#courses">Курстар</a>
+    <a class="btn" href="#tests">Тест</a>
+    <a class="btn" href="#analytics">Анализ</a>
+  </nav>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+    <section class="card" id="courses">
+      <h2>Курстар</h2>
+      <ul class="list">
+        <li><b>1) Кіріспе:</b> AI / ML / Neural Networks <span class="tag">теория</span></li>
+        <li><b>2) Деректер:</b> Dataset, Train/Test, метрикалар <span class="tag">practice</span></li>
+        <li><b>3) Модель:</b> Perceptron, CNN, Overfitting <span class="tag">practice</span></li>
+        <li><b>4) Жоба:</b> Мини-жоба (курстық жұмыс) <span class="tag">project</span></li>
+      </ul>
+      <p class="small">Кейін әр курсқа бөлек бет (lesson1.html, lesson2.html) қосамыз.</p>
+    </section>
+
+    <section class="card" id="tests">
+      <h2>Тест нәтижесін енгізу (демо)</h2>
+      <div class="row">
+        <div style="flex:1; min-width:220px">
+          <label class="small">Студент аты</label>
+          <input id="name" placeholder="Мысалы: Aidos" />
+        </div>
+        <div style="flex:1; min-width:220px">
+          <label class="small">Тақырып</label>
+          <select id="topic">
+            <option value="Activation">Activation (sigmoid/ReLU)</option>
+            <option value="Loss">Loss function</option>
+            <option value="Overfitting">Overfitting</option>
+            <option value="CNN">CNN basics</option>
+          </select>
+        </div>
+        <div style="flex:1; min-width:220px">
+          <label class="small">Ұпай (0–100)</label>
+          <input id="score" type="number" min="0" max="100" value="0" />
+        </div>
+      </div>
+      <div style="margin-top:10px" class="row">
+        <button class="btn" onclick="addResult()">Нәтиже қосу</button>
+        <button class="btn" onclick="seed()">Демо мәлімет енгізу</button>
+        <button class="btn" onclick="clearAll()">Тазалау</button>
+      </div>
+      <p class="small">Бұл демо: мәлімет браузерде сақталады (localStorage). Кейін база/логин қосамыз.</p>
+    </section>
+  </div>
+
+  <section class="card" id="analytics" style="margin-top:14px">
+    <h2>Аналитика (тест нәтижесі бойынша)</h2>
+    <div class="small">Ереже: 0–49 = төмен, 50–74 = орта, 75–100 = жоғары</div>
+
+    <div style="margin-top:10px; overflow:auto">
+      <table id="tbl">
+        <thead>
+          <tr><th>Студент</th><th>Тақырып</th><th>Ұпай</th><th>Деңгей</th><th>Ұсыныс</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:12px" class="card">
+      <h2>Қысқа қорытынды</h2>
+      <div id="summary" class="small">Әзірге мәлімет жоқ.</div>
+    </div>
+  </section>
+</div>
+
+<script>
+  const KEY = "nn_lms_results_v1";
+
+  function level(score){
+    if(score < 50) return "Төмен";
+    if(score < 75) return "Орта";
+    return "Жоғары";
+  }
+
+  function advice(topic, score){
+    const lv = level(score);
+    if(lv === "Жоғары") return "Келесі тақырыпқа өтіңіз + мини-жоба жасаңыз.";
+    if(topic==="Activation") return "Sigmoid/ReLU графигін салып, 5 есеп шығарыңыз.";
+    if(topic==="Loss") return "MSE/CE айырмасын қысқаша конспект жасаңыз.";
+    if(topic==="Overfitting") return "Train/Val ұғымдарын қайталаңыз, regularization қараңыз.";
+    if(topic==="CNN") return "Conv/Pooling түсініктерін мысалмен бекітіңіз.";
+    return "Қайталау + қосымша тапсырма.";
+  }
+
+  function load(){
+    try{ return JSON.parse(localStorage.getItem(KEY) || "[]"); }
+    catch(e){ return []; }
+  }
+
+  function save(rows){
+    localStorage.setItem(KEY, JSON.stringify(rows));
+  }
+
+  function render(){
+    const rows = load();
+    const tb = document.querySelector("#tbl tbody");
+    tb.innerHTML = "";
+    rows.forEach(r=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${r.name}</td>
+        <td>${r.topic}</td>
+        <td>${r.score}</td>
+        <td>${level(r.score)}</td>
+        <td>${advice(r.topic, r.score)}</td>
+      `;
+      tb.appendChild(tr);
+    });
+
+    const summary = document.getElementById("summary");
+    if(rows.length===0){ summary.textContent = "Әзірге мәлімет жоқ."; return; }
+
+    const avg = Math.round(rows.reduce((a,b)=>a+b.score,0)/rows.length);
+    const low = rows.filter(r=>r.score<50).length;
+    const mid = rows.filter(r=>r.score>=50 && r.score<75).length;
+    const high = rows.filter(r=>r.score>=75).length;
+
+    summary.innerHTML = `
+      Жалпы жазба: <b>${rows.length}</b> • Орташа ұпай: <b>${avg}</b><br/>
+      Төмен: <b>${low}</b> • Орта: <b>${mid}</b> • Жоғары: <b>${high}</b><br/>
+      Ең көп қиналатын тақырыпты көру үшін кейін диаграмма қосамыз.
+    `;
+  }
+
+  function addResult(){
+    const name = document.getElementById("name").value.trim() || "Unknown";
+    const topic = document.getElementById("topic").value;
+    const score = Math.max(0, Math.min(100, Number(document.getElementById("score").value || 0)));
+    const rows = load();
+    rows.unshift({name, topic, score, ts: Date.now()});
+    save(rows);
+    render();
+  }
+
+  function seed(){
+    const demo = [
+      {name:"Aidos", topic:"Activation", score:42},
+      {name:"Dana", topic:"CNN", score:78},
+      {name:"Madi", topic:"Loss", score:64},
+      {name:"Aigerim", topic:"Overfitting", score:49},
+    ].map(x=>({...x, ts: Date.now()}));
+    save(demo);
+    render();
+  }
+
+  function clearAll(){
+    save([]);
+    render();
+  }
+
+  render();
+</script>
+</body>
+</html>
