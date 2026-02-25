@@ -2,192 +2,319 @@
 <html lang="kk">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Neural Networks LMS</title>
   <style>
-    body{font-family:Arial, sans-serif; margin:0; background:#0b0f14; color:#e8eef7;}
-    header{display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid #1b2430;}
-    a{color:#8ab4ff; text-decoration:none}
-    .wrap{max-width:1100px; margin:0 auto; padding:18px;}
-    .grid{display:grid; grid-template-columns:1fr; gap:14px;}
-    @media(min-width:900px){.grid{grid-template-columns:1.2fr .8fr}}
-    .card{background:#111826; border:1px solid #1b2430; border-radius:14px; padding:16px;}
-    h1{font-size:22px; margin:0}
-    h2{font-size:16px; margin:0 0 10px}
-    .btn{display:inline-block; padding:10px 12px; border:1px solid #2b3b52; border-radius:10px; background:#0f1724; color:#e8eef7}
-    .btn:hover{background:#122038}
-    .list{margin:0; padding-left:18px; line-height:1.6}
-    .small{color:#a9b6c6; font-size:13px}
-    .row{display:flex; gap:10px; flex-wrap:wrap}
-    input,select{background:#0f1724; border:1px solid #2b3b52; color:#e8eef7; padding:10px; border-radius:10px; width:100%}
-    table{width:100%; border-collapse:collapse; font-size:14px}
-    th,td{border-bottom:1px solid #1b2430; padding:10px; text-align:left}
-    th{color:#a9b6c6; font-weight:600}
-    .tag{display:inline-block; padding:3px 8px; border:1px solid #2b3b52; border-radius:999px; font-size:12px; color:#a9b6c6}
+    :root{
+      --bg: #0b1220;
+      --card: rgba(255,255,255,.10);
+      --card2: rgba(255,255,255,.06);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --accent: #4f8cff;
+      --accent2:#6ee7ff;
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --radius: 18px;
+      --max: 1100px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height:100vh;
+    }
+
+    /* Background image + overlay */
+    .hero{
+      position:relative;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 28px 18px;
+      overflow:hidden;
+    }
+    .hero::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        linear-gradient(120deg, rgba(11,18,32,.92) 0%, rgba(11,18,32,.72) 55%, rgba(11,18,32,.92) 100%),
+        url("./assets/bg.jpg") center/cover no-repeat;
+      transform: scale(1.02);
+      filter: saturate(1.05) contrast(1.05);
+    }
+    .hero::after{
+      content:"";
+      position:absolute; inset:-200px;
+      background: radial-gradient(circle at 20% 15%, rgba(79,140,255,.25), transparent 45%),
+                  radial-gradient(circle at 85% 35%, rgba(110,231,255,.18), transparent 45%),
+                  radial-gradient(circle at 40% 90%, rgba(99,102,241,.18), transparent 45%);
+      pointer-events:none;
+    }
+
+    .wrap{
+      position:relative;
+      width:100%;
+      max-width: var(--max);
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 22px;
+      align-items:stretch;
+    }
+
+    .topbar{
+      position:absolute;
+      top: 18px;
+      left: 18px;
+      right: 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(10px);
+    }
+    .brand{
+      display:flex; gap:10px; align-items:center;
+      font-weight:700; letter-spacing:.2px;
+    }
+    .logo{
+      width:36px; height:36px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 10px 30px rgba(79,140,255,.25);
+    }
+    .nav a{
+      color: var(--muted);
+      text-decoration:none;
+      font-weight:600;
+      margin-left: 14px;
+    }
+    .nav a:hover{ color: var(--text); }
+
+    .card{
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      padding: 28px;
+    }
+    .card.soft{
+      background: var(--card2);
+    }
+
+    h1{
+      margin:0 0 10px 0;
+      font-size: clamp(26px, 3.4vw, 42px);
+      line-height:1.15;
+      letter-spacing: .2px;
+    }
+    .subtitle{
+      margin:0 0 18px 0;
+      color: var(--muted);
+      font-size: 15.5px;
+      line-height:1.55;
+    }
+
+    .chips{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin: 16px 0 22px;
+    }
+    .chip{
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.78);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .btn{
+      border:0;
+      cursor:pointer;
+      font-weight:800;
+      padding: 12px 16px;
+      border-radius: 14px;
+      transition: transform .08s ease, opacity .2s ease;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      color:#081022;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 16px 40px rgba(79,140,255,.25);
+    }
+    .btn.ghost{
+      color: var(--text);
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.16);
+    }
+
+    .meta{
+      margin-top: 18px;
+      color: rgba(255,255,255,.65);
+      font-size: 13.5px;
+      line-height:1.5;
+    }
+
+    .formTitle{
+      font-size: 16px;
+      font-weight: 800;
+      margin: 0 0 10px 0;
+    }
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap: 6px;
+      margin: 10px 0;
+    }
+    label{
+      color: rgba(255,255,255,.72);
+      font-weight: 650;
+      font-size: 13px;
+    }
+    input{
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 14px;
+      padding: 12px 12px;
+      color: var(--text);
+      outline: none;
+    }
+    input::placeholder{ color: rgba(255,255,255,.45); }
+    input:focus{
+      border-color: rgba(110,231,255,.45);
+      box-shadow: 0 0 0 4px rgba(110,231,255,.12);
+    }
+
+    .small{
+      font-size: 12.5px;
+      color: rgba(255,255,255,.62);
+      margin-top: 10px;
+      line-height:1.45;
+    }
+
+    footer{
+      position: absolute;
+      bottom: 14px;
+      left: 18px;
+      right: 18px;
+      max-width: var(--max);
+      margin: 0 auto;
+      color: rgba(255,255,255,.55);
+      font-size: 12.5px;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 880px){
+      .wrap{ grid-template-columns: 1fr; }
+      .topbar{ position:relative; top:auto; left:auto; right:auto; margin-bottom: 16px; }
+      footer{ position:relative; margin-top: 16px; bottom:auto; }
+    }
   </style>
 </head>
+
 <body>
-<header>
-  <div>
-    <h1>Neural Networks LMS</h1>
-    <div class="small">Мини-портал: курстар • тест • нәтижені талдау</div>
-  </div>
-  <nav class="row">
-    <a class="btn" href="#courses">Курстар</a>
-    <a class="btn" href="#tests">Тест</a>
-    <a class="btn" href="#analytics">Анализ</a>
-  </nav>
-</header>
-
-<div class="wrap">
-  <div class="grid">
-    <section class="card" id="courses">
-      <h2>Курстар</h2>
-      <ul class="list">
-        <li><b>1) Кіріспе:</b> AI / ML / Neural Networks <span class="tag">теория</span></li>
-        <li><b>2) Деректер:</b> Dataset, Train/Test, метрикалар <span class="tag">practice</span></li>
-        <li><b>3) Модель:</b> Perceptron, CNN, Overfitting <span class="tag">practice</span></li>
-        <li><b>4) Жоба:</b> Мини-жоба (курстық жұмыс) <span class="tag">project</span></li>
-      </ul>
-      <p class="small">Кейін әр курсқа бөлек бет (lesson1.html, lesson2.html) қосамыз.</p>
-    </section>
-
-    <section class="card" id="tests">
-      <h2>Тест нәтижесін енгізу (демо)</h2>
-      <div class="row">
-        <div style="flex:1; min-width:220px">
-          <label class="small">Студент аты</label>
-          <input id="name" placeholder="Мысалы: Aidos" />
-        </div>
-        <div style="flex:1; min-width:220px">
-          <label class="small">Тақырып</label>
-          <select id="topic">
-            <option value="Activation">Activation (sigmoid/ReLU)</option>
-            <option value="Loss">Loss function</option>
-            <option value="Overfitting">Overfitting</option>
-            <option value="CNN">CNN basics</option>
-          </select>
-        </div>
-        <div style="flex:1; min-width:220px">
-          <label class="small">Ұпай (0–100)</label>
-          <input id="score" type="number" min="0" max="100" value="0" />
+  <section class="hero">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          Neural Networks LMS<br />
+          <span style="font-weight:650; color:rgba(255,255,255,.65); font-size:12.5px;">Білім беру порталы</span>
         </div>
       </div>
-      <div style="margin-top:10px" class="row">
-        <button class="btn" onclick="addResult()">Нәтиже қосу</button>
-        <button class="btn" onclick="seed()">Демо мәлімет енгізу</button>
-        <button class="btn" onclick="clearAll()">Тазалау</button>
+      <nav class="nav">
+        <a href="#courses">Курстар</a>
+        <a href="#about">Жоба</a>
+        <a href="#register">Тіркелу</a>
+      </nav>
+    </div>
+
+    <div class="wrap">
+      <!-- Left -->
+      <div class="card">
+        <h1>Болашақ информатика мұғалімдеріне арналған<br/>AI & Neural Networks курстары</h1>
+        <p class="subtitle">
+          Машиналық оқыту, нейрондық желілер, компьютерлік көру, деректермен жұмыс және оқу аналитикасы.
+          Бір платформада – материалдар, тапсырмалар, тест және нәтижелер.
+        </p>
+
+        <div class="chips" id="courses">
+          <span class="chip">Machine Learning</span>
+          <span class="chip">Neural Networks</span>
+          <span class="chip">Computer Vision</span>
+          <span class="chip">Big Data</span>
+          <span class="chip">Ақпараттық қауіпсіздік</span>
+        </div>
+
+        <div class="actions">
+          <a class="btn primary" href="#register">Тіркелу</a>
+          <a class="btn ghost" href="#about">Жоба туралы</a>
+        </div>
+
+        <div class="meta" id="about">
+          Жетекші: <b>п.ғ.д., профессор Серік М.</b><br/>
+          Орындаушы: <b>Нұржанар</b><br/>
+          Платформа: <b>Neural Networks LMS</b>
+        </div>
       </div>
-      <p class="small">Бұл демо: мәлімет браузерде сақталады (localStorage). Кейін база/логин қосамыз.</p>
-    </section>
-  </div>
 
-  <section class="card" id="analytics" style="margin-top:14px">
-    <h2>Аналитика (тест нәтижесі бойынша)</h2>
-    <div class="small">Ереже: 0–49 = төмен, 50–74 = орта, 75–100 = жоғары</div>
+      <!-- Right -->
+      <div class="card soft" id="register">
+        <p class="formTitle">Тіркелу (демо)</p>
 
-    <div style="margin-top:10px; overflow:auto">
-      <table id="tbl">
-        <thead>
-          <tr><th>Студент</th><th>Тақырып</th><th>Ұпай</th><th>Деңгей</th><th>Ұсыныс</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+        <!-- Static demo form (GitHub Pages-та backend жоқ). Кейін Firebase/Google Forms/Sheets қосуға болады -->
+        <form onsubmit="event.preventDefault(); alert('Демо: тіркелу батырмасы басылды ✅');">
+          <div class="field">
+            <label>Аты-жөніңіз</label>
+            <input type="text" placeholder="Мысалы: Аружан Т." required />
+          </div>
+
+          <div class="field">
+            <label>Email</label>
+            <input type="email" placeholder="name@mail.com" required />
+          </div>
+
+          <div class="field">
+            <label>Рөл</label>
+            <input type="text" placeholder="Студент / Магистрант / Оқытушы" />
+          </div>
+
+          <button class="btn primary" type="submit" style="width:100%;">Тіркелу</button>
+
+          <div class="small">
+            * Бұл қазір статикалық демо. Нақты тіркелуді қосу үшін келесі қадамда:
+            Google Forms/Sheets немесе Firebase Authentication жалғаймыз.
+          </div>
+        </form>
+      </div>
     </div>
 
-    <div style="margin-top:12px" class="card">
-      <h2>Қысқа қорытынды</h2>
-      <div id="summary" class="small">Әзірге мәлімет жоқ.</div>
-    </div>
+    <footer>
+      <div>© 2026 Neural Networks LMS</div>
+      <div>GitHub Pages арқылы жарияланған</div>
+    </footer>
   </section>
-</div>
-
-<script>
-  const KEY = "nn_lms_results_v1";
-
-  function level(score){
-    if(score < 50) return "Төмен";
-    if(score < 75) return "Орта";
-    return "Жоғары";
-  }
-
-  function advice(topic, score){
-    const lv = level(score);
-    if(lv === "Жоғары") return "Келесі тақырыпқа өтіңіз + мини-жоба жасаңыз.";
-    if(topic==="Activation") return "Sigmoid/ReLU графигін салып, 5 есеп шығарыңыз.";
-    if(topic==="Loss") return "MSE/CE айырмасын қысқаша конспект жасаңыз.";
-    if(topic==="Overfitting") return "Train/Val ұғымдарын қайталаңыз, regularization қараңыз.";
-    if(topic==="CNN") return "Conv/Pooling түсініктерін мысалмен бекітіңіз.";
-    return "Қайталау + қосымша тапсырма.";
-  }
-
-  function load(){
-    try{ return JSON.parse(localStorage.getItem(KEY) || "[]"); }
-    catch(e){ return []; }
-  }
-
-  function save(rows){
-    localStorage.setItem(KEY, JSON.stringify(rows));
-  }
-
-  function render(){
-    const rows = load();
-    const tb = document.querySelector("#tbl tbody");
-    tb.innerHTML = "";
-    rows.forEach(r=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${r.name}</td>
-        <td>${r.topic}</td>
-        <td>${r.score}</td>
-        <td>${level(r.score)}</td>
-        <td>${advice(r.topic, r.score)}</td>
-      `;
-      tb.appendChild(tr);
-    });
-
-    const summary = document.getElementById("summary");
-    if(rows.length===0){ summary.textContent = "Әзірге мәлімет жоқ."; return; }
-
-    const avg = Math.round(rows.reduce((a,b)=>a+b.score,0)/rows.length);
-    const low = rows.filter(r=>r.score<50).length;
-    const mid = rows.filter(r=>r.score>=50 && r.score<75).length;
-    const high = rows.filter(r=>r.score>=75).length;
-
-    summary.innerHTML = `
-      Жалпы жазба: <b>${rows.length}</b> • Орташа ұпай: <b>${avg}</b><br/>
-      Төмен: <b>${low}</b> • Орта: <b>${mid}</b> • Жоғары: <b>${high}</b><br/>
-      Ең көп қиналатын тақырыпты көру үшін кейін диаграмма қосамыз.
-    `;
-  }
-
-  function addResult(){
-    const name = document.getElementById("name").value.trim() || "Unknown";
-    const topic = document.getElementById("topic").value;
-    const score = Math.max(0, Math.min(100, Number(document.getElementById("score").value || 0)));
-    const rows = load();
-    rows.unshift({name, topic, score, ts: Date.now()});
-    save(rows);
-    render();
-  }
-
-  function seed(){
-    const demo = [
-      {name:"Aidos", topic:"Activation", score:42},
-      {name:"Dana", topic:"CNN", score:78},
-      {name:"Madi", topic:"Loss", score:64},
-      {name:"Aigerim", topic:"Overfitting", score:49},
-    ].map(x=>({...x, ts: Date.now()}));
-    save(demo);
-    render();
-  }
-
-  function clearAll(){
-    save([]);
-    render();
-  }
-
-  render();
-</script>
 </body>
 </html>
