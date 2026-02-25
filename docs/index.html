@@ -251,6 +251,38 @@
       .topbar{ position:relative; top:auto; left:auto; right:auto; margin-bottom: 16px; }
       footer{ position:relative; margin-top: 16px; bottom:auto; }
     }
+    .form-actions{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+}
+
+.btn{
+  flex:1;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+  transition:.2s ease;
+}
+
+.btn:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.22);
+}
+
+.btn-primary{
+  background: linear-gradient(90deg,#5aa9ff,#5de0e6);
+  color:#071018;
+  border: none;
+}
+
+.btn-ghost{
+  background: rgba(255,255,255,.08);
+}
   </style>
 </head>
 
@@ -286,9 +318,10 @@
           <span class="chip">Big Data</span>
                  </div>
 
-        <div class="actions">
-          <a href="#" class="login-btn">Кіру</a>
-          <a class="btn primary" href="#register">Тіркелу</a>
+        <div class="form-actions">
+  <button type="button" class="btn btn-primary">Тіркелу</button>
+  <button type="button" class="btn btn-ghost">Кіру</button>
+</div>
           
        
         </div>
@@ -323,7 +356,7 @@
 
           <div class="auth-switch">
   <button class="auth-btn active">Тіркелу</button>
-  <button class="auth-btn">Кіру</button>
+ 
 </div>
 
           <div class="small">
