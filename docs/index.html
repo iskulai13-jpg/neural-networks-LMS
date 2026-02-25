@@ -25,7 +25,27 @@
       color: var(--text);
       min-height:100vh;
     }
+.auth-switch {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
 
+.auth-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.auth-btn.active {
+  background: linear-gradient(90deg,#5aa9ff,#5de0e6);
+  color: #000;
+}
     /* Background image + overlay */
     .hero{
       position:relative;
